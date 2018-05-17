@@ -28,12 +28,7 @@ void ApiV1::users_GET(Context *c)
     QSettings s;
     const QStringList uuids = s.childGroups();
 
-    QJsonArray array;
-    for (const QString &uuid : uuids) {
-        array.append(uuid);
-    }
-
-    c->response()->setJsonArrayBody(array);
+    c->response()->setJsonArrayBody(QJsonArray::fromStringList(uuids));
 }
 
 void ApiV1::users_POST(Context *c)
