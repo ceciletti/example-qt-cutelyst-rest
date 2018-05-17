@@ -13,7 +13,7 @@ public:
     Q_INVOKABLE explicit ServerREST(QObject *parent = 0);
     ~ServerREST();
 
-    bool init();
+    bool init() override final;
 };
 
 #endif //SERVERREST_H

@@ -13,7 +13,7 @@ if(WIN32)
 endif()
 
 find_package(Qt5 COMPONENTS Core Network REQUIRED)
-find_package(CutelystQt5 REQUIRED)
+find_package(Cutelyst2Qt5 2.3.0 REQUIRED)
 
 # Auto generate moc files
 set(CMAKE_AUTOMOC ON)
@@ -25,7 +25,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CutelystQt5_INCLUDE_DIR}
+    ${Cutelyst2Qt5_INCLUDE_DIR}
 )
 
 file(GLOB_RECURSE TEMPLATES_SRC root/*)

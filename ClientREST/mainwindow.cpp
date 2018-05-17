@@ -12,7 +12,7 @@
 #include <QDebug>
 
 const static QUrl server(QLatin1String("http://localhost:3000"));
-const static QString usuariosApiPath(QLatin1String("/api/v1/usuarios"));
+const static QString usersApiPath(QLatin1String("/api/v1/users"));
 const static QString contentTypeJson(QLatin1String("application/json"));
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->obterPB, &QPushButton::clicked, this, &MainWindow::getUsuarios);
-    connect(ui->uuidCB, &QComboBox::currentTextChanged, this, &MainWindow::getUsuario);
-    connect(ui->novoAtualizarPB, &QPushButton::clicked, this, &MainWindow::novoOuAtualizarUsuario);
-    connect(ui->apagarPB, &QPushButton::clicked, this, &MainWindow::apagarUsuario);
+    connect(ui->getPB, &QPushButton::clicked, this, &MainWindow::getUsers);
+    connect(ui->uuidCB, &QComboBox::currentTextChanged, this, &MainWindow::getUser);
+    connect(ui->newUpdatePB, &QPushButton::clicked, this, &MainWindow::newOrUpdateUser);
+    connect(ui->removePB, &QPushButton::clicked, this, &MainWindow::removeUser);
 }
 
 MainWindow::~MainWindow()
@@ -33,14 +33,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::getUsuarios()
+void MainWindow::getUsers()
 {
     while (ui->uuidCB->count() > 1) {
         ui->uuidCB->removeItem(1);
     }
 
     QUrl url = server;
-    url.setPath(usuariosApiPath);
+    url.setPath(usersApiPath);
 
     QNetworkRequest request(url);
 
@@ -55,7 +55,7 @@ void MainWindow::getUsuarios()
     });
 }
 
-void MainWindow::getUsuario()
+void MainWindow::getUser()
 {
     const QString uuid = ui->uuidCB->currentText();
     if (uuid.isEmpty()) {
@@ -63,7 +63,7 @@ void MainWindow::getUsuario()
     }
 
     QUrl url = server;
-    url.setPath(usuariosApiPath + QLatin1Char('/') + uuid);
+    url.setPath(usersApiPath + QLatin1Char('/') + uuid);
 
     QNetworkRequest request(url);
 
@@ -72,35 +72,35 @@ void MainWindow::getUsuario()
         reply->deleteLater();
         const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
         const QJsonObject obj = doc.object();
-        ui->nomeLE->setText(obj.value(QLatin1String("nome")).toString());
-        ui->idadeSP->setValue(obj.value(QLatin1String("idade")).toInt());
+        ui->nameLE->setText(obj.value(QLatin1String("name")).toString());
+        ui->ageSP->setValue(obj.value(QLatin1String("age")).toInt());
     });
 }
 
-void MainWindow::novoOuAtualizarUsuario()
+void MainWindow::newOrUpdateUser()
 {
     if (ui->uuidCB->currentIndex() == 0) {
-        novoUsuario();
+        newUser();
     } else {
-        atualizaUsuario();
+        updateUser();
     }
 }
 
-void MainWindow::novoUsuario()
+void MainWindow::newUser()
 {
     QUrl url = server;
-    url.setPath(usuariosApiPath);
+    url.setPath(usersApiPath);
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentTypeJson);
 
     QJsonObject obj{
-        {QStringLiteral("nome"), ui->nomeLE->text()},
-        {QStringLiteral("idade"), ui->idadeSP->value()}
+        {QStringLiteral("name"), ui->nameLE->text()},
+        {QStringLiteral("age"), ui->ageSP->value()}
     };
 
     QNetworkReply *reply = m_nam->post(request, QJsonDocument(obj).toJson());
-    connect(reply, &QNetworkReply::finished, this, [this, reply] () {
+    connect(reply, &QNetworkReply::finished, this, [this, reply] {
         reply->deleteLater();
         const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
         const QJsonObject obj = doc.object();
@@ -114,7 +114,7 @@ void MainWindow::novoUsuario()
     });
 }
 
-void MainWindow::atualizaUsuario()
+void MainWindow::updateUser()
 {
     const QString uuid = ui->uuidCB->currentText();
     const int currentIndex = ui->uuidCB->currentIndex();
@@ -123,18 +123,18 @@ void MainWindow::atualizaUsuario()
     }
 
     QUrl url = server;
-    url.setPath(usuariosApiPath + QLatin1Char('/') + uuid);
+    url.setPath(usersApiPath + QLatin1Char('/') + uuid);
 
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, contentTypeJson);
 
     QJsonObject obj{
-        {QStringLiteral("nome"), ui->nomeLE->text()},
-        {QStringLiteral("idade"), ui->idadeSP->value()}
+        {QStringLiteral("name"), ui->nameLE->text()},
+        {QStringLiteral("age"), ui->ageSP->value()}
     };
 
     QNetworkReply *reply = m_nam->put(request, QJsonDocument(obj).toJson());
-    connect(reply, &QNetworkReply::finished, this, [this, reply] () {
+    connect(reply, &QNetworkReply::finished, this, [this, reply] {
         reply->deleteLater();
         const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
         const QJsonObject obj = doc.object();
@@ -145,7 +145,7 @@ void MainWindow::atualizaUsuario()
     });
 }
 
-void MainWindow::apagarUsuario()
+void MainWindow::removeUser()
 {
     const QString uuid = ui->uuidCB->currentText();
     const int currentIndex = ui->uuidCB->currentIndex();
@@ -154,7 +154,7 @@ void MainWindow::apagarUsuario()
     }
 
     QUrl url = server;
-    url.setPath(usuariosApiPath + QLatin1Char('/') + uuid);
+    url.setPath(usersApiPath + QLatin1Char('/') + uuid);
 
     QNetworkRequest request(url);
 

@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="label">
       <property name="text">
-       <string>Usuários UUIDs:</string>
+       <string>Users UUIDs:</string>
       </property>
      </widget>
     </item>
@@ -34,15 +34,15 @@
         </property>
         <item>
          <property name="text">
-          <string>Novo usuário</string>
+          <string>New user</string>
          </property>
         </item>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="obterPB">
+       <widget class="QPushButton" name="getPB">
         <property name="text">
-         <string>Obter</string>
+         <string>Get</string>
         </property>
        </widget>
       </item>
@@ -51,34 +51,34 @@
     <item row="1" column="0">
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>Nome:</string>
+       <string>Name</string>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QLineEdit" name="nomeLE"/>
+     <widget class="QLineEdit" name="nameLE"/>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>Idade:</string>
+       <string>Age</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QSpinBox" name="idadeSP"/>
+     <widget class="QSpinBox" name="ageSP"/>
     </item>
     <item row="3" column="1">
-     <widget class="QPushButton" name="novoAtualizarPB">
+     <widget class="QPushButton" name="newUpdatePB">
       <property name="text">
-       <string>Novo/Atualizar</string>
+       <string>New/Update</string>
       </property>
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QPushButton" name="apagarPB">
+     <widget class="QPushButton" name="removePB">
       <property name="text">
-       <string>Apagar</string>
+       <string>Remove</string>
       </property>
      </widget>
     </item>

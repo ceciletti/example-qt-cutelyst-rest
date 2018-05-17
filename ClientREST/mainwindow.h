@@ -17,12 +17,12 @@ public:
     ~MainWindow();
 
 private:
-    void getUsuarios();
-    void getUsuario();
-    void novoOuAtualizarUsuario();
-    void novoUsuario();
-    void atualizaUsuario();
-    void apagarUsuario();
+    void getUsers();
+    void getUser();
+    void newOrUpdateUser();
+    void newUser();
+    void updateUser();
+    void removeUser();
 
     Ui::MainWindow *ui;
     QNetworkAccessManager *m_nam;

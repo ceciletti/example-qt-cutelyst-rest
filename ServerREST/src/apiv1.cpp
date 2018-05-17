@@ -17,12 +17,12 @@ ApiV1::~ApiV1()
 {
 }
 
-void ApiV1::usuarios(Context *c)
+void ApiV1::users(Context *c)
 {
     qDebug() << Q_FUNC_INFO;
 }
 
-void ApiV1::usuarios_GET(Context *c)
+void ApiV1::users_GET(Context *c)
 {
     qDebug() << Q_FUNC_INFO;
     QSettings s;
@@ -33,43 +33,42 @@ void ApiV1::usuarios_GET(Context *c)
         array.append(uuid);
     }
 
-    c->response()->setJsonBody(array);
+    c->response()->setJsonArrayBody(array);
 }
 
-void ApiV1::usuarios_POST(Context *c)
+void ApiV1::users_POST(Context *c)
 {
     qDebug() << Q_FUNC_INFO;
     const QString uuid = QUuid::createUuid().toString()
             .remove(QLatin1Char('{'))
             .remove(QLatin1Char('}'));
-    usuarios_uuid_PUT(c, uuid);
+    users_uuid_PUT(c, uuid);
 }
 
-void ApiV1::usuarios_uuid(Context *c, const QString &uuid)
+void ApiV1::users_uuid(Context *c, const QString &uuid)
 {
     qDebug() << Q_FUNC_INFO << uuid;
 }
 
-void ApiV1::usuarios_uuid_GET(Context *c, const QString &uuid)
+void ApiV1::users_uuid_GET(Context *c, const QString &uuid)
 {
     qDebug() << Q_FUNC_INFO << uuid;
     QSettings s;
-    if (!s.childGroups().contains(uuid)) {
-        c->response()->setJsonBody(QJsonObject{
+    if (s.childGroups().contains(uuid)) {
+        s.beginGroup(uuid);
+        c->response()->setJsonObjectBody({
+                                             {QStringLiteral("name"), s.value(QStringLiteral("name")).toString()},
+                                             {QStringLiteral("age"), s.value(QStringLiteral("age")).toInt()}
+                                         });
+    } else {
+        c->response()->setJsonObjectBody({
                                        {QStringLiteral("error"), QStringLiteral("not found")}
                                    });
         c->response()->setStatus(Response::NotFound);
-        return;
     }
-
-    s.beginGroup(uuid);
-    c->response()->setJsonBody(QJsonObject{
-                                   {QStringLiteral("nome"), s.value(QStringLiteral("nome")).toString()},
-                                   {QStringLiteral("idade"), s.value(QStringLiteral("idade")).toInt()}
-                               });
 }
 
-void ApiV1::usuarios_uuid_PUT(Context *c, const QString &uuid)
+void ApiV1::users_uuid_PUT(Context *c, const QString &uuid)
 {
     qDebug() << Q_FUNC_INFO << uuid;
     const QJsonDocument doc = c->request()->bodyData().toJsonDocument();
@@ -77,25 +76,25 @@ void ApiV1::usuarios_uuid_PUT(Context *c, const QString &uuid)
 
     QSettings s;
     s.beginGroup(uuid);
-    s.setValue(QStringLiteral("nome"), obj.value(QStringLiteral("nome")).toString());
-    s.setValue(QStringLiteral("idade"), obj.value(QStringLiteral("idade")).toDouble());
+    s.setValue(QStringLiteral("name"), obj.value(QStringLiteral("name")).toString());
+    s.setValue(QStringLiteral("age"), obj.value(QStringLiteral("age")).toDouble());
     s.endGroup();
     s.sync();
 
     if (s.status()) {
-        c->response()->setJsonBody(QJsonObject{
+        c->response()->setJsonObjectBody({
                                        {QStringLiteral("status"), QStringLiteral("error")},
-                                       {QStringLiteral("error"), QStringLiteral("falhou")}
+                                       {QStringLiteral("error"), QStringLiteral("failed")}
                                    });
     } else {
-        c->response()->setJsonBody(QJsonObject{
+        c->response()->setJsonObjectBody({
                                        {QStringLiteral("status"), QStringLiteral("ok")},
                                        {QStringLiteral("uuid"), uuid}
                                    });
     }
 }
 
-void ApiV1::usuarios_uuid_DELETE(Context *c, const QString &uuid)
+void ApiV1::users_uuid_DELETE(Context *c, const QString &uuid)
 {
     qDebug() << Q_FUNC_INFO << uuid;
     QSettings s;
@@ -106,12 +105,12 @@ void ApiV1::usuarios_uuid_DELETE(Context *c, const QString &uuid)
     }
 
     if (!removed || s.status()) {
-        c->response()->setJsonBody(QJsonObject{
+        c->response()->setJsonObjectBody({
                                        {QStringLiteral("status"), QStringLiteral("error")},
-                                       {QStringLiteral("error"), QStringLiteral("falhou")}
+                                       {QStringLiteral("error"), QStringLiteral("failed")}
                                    });
     } else {
-        c->response()->setJsonBody(QJsonObject{
+        c->response()->setJsonObjectBody({
                                        {QStringLiteral("status"), QStringLiteral("ok")},
                                    });
     }
